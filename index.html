@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreetPulse — Financial Intelligence, Redefined</title>
+  <meta name="description" content="StreetPulse is a financial intelligence platform that cuts through the noise. Track mutual fund portfolios, uncover hidden patterns, and let AI power your decisions.">
+  <meta property="og:title" content="StreetPulse — Financial Intelligence, Redefined">
+  <meta property="og:description" content="Cut through the noise. Track portfolios. Uncover patterns. AI-powered decisions.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://streetpulse.in">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #07090E;
+      --bg-card: #0D1117;
+      --bg-card-hover: #131921;
+      --accent: #00E599;
+      --accent-dim: rgba(0, 229, 153, 0.15);
+      --accent-glow: rgba(0, 229, 153, 0.4);
+      --text-primary: #F0F2F5;
+      --text-secondary: #8B95A5;
+      --text-muted: #4A5568;
+      --border: rgba(255, 255, 255, 0.06);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Ambient Background --- */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.3;
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+
+    .ambient .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+      top: -10%;
+      right: -5%;
+    }
+
+    .ambient .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent 70%);
+      bottom: 10%;
+      left: -5%;
+      animation-delay: -10s;
+    }
+
+    .ambient .orb-3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 229, 153, 0.15), transparent 70%);
+      top: 50%;
+      left: 40%;
+      animation-delay: -5s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -30px) scale(1.1); }
+    }
+
+    /* --- Grid overlay --- */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+
+    /* --- Layout --- */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Nav --- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-right: 2.5px solid var(--bg-primary);
+      border-top: 2.5px solid var(--bg-primary);
+      transform: rotate(45deg) translate(-1px, 1px);
+    }
+
+    .nav-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 5px 12px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 100px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* --- Hero --- */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0, 229, 153, 0.2);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent), #00B8D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin-bottom: 48px;
+    }
+
+    /* --- Waitlist form --- */
+    .waitlist {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      max-width: 460px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      transition: border-color 0.3s;
+    }
+
+    .waitlist:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .waitlist input {
+      flex: 1;
+      padding: 16px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .waitlist input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .waitlist button {
+      padding: 16px 28px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .waitlist button:hover {
+      background: #00CC88;
+    }
+
+    .waitlist-note {
+      margin-top: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* --- Feature teasers --- */
+    .features {
+      padding: 60px 24px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .features-label {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(0, 229, 153, 0.15);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .feature-tag {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0, 229, 153, 0.08);
+      color: var(--accent);
+    }
+
+    /* --- Ticker --- */
+    .ticker-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 18px 0;
+      position: relative;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 48px;
+      animation: ticker-scroll 30s linear infinite;
+      width: max-content;
+    }
+
+    .ticker-item {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ticker-item .value {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    @keyframes ticker-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* --- Footer --- */
+    footer {
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* --- Toast --- */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-card);
+      border: 1px solid var(--accent);
+      color: var(--text-primary);
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* --- Scroll reveal --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      nav {
+        padding: 16px 20px;
+      }
+
+      .hero {
+        padding: 60px 20px 32px;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .waitlist {
+        flex-direction: column;
+        border-radius: 12px;
+      }
+
+      .waitlist button {
+        border-top: 1px solid var(--border);
+      }
+
+      .features {
+        padding: 40px 20px 60px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 8px;
+        padding: 24px 20px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="grid-overlay"></div>
+
+  <div class="wrapper">
+    <!-- Nav -->
+    <nav>
+      <div class="logo">
+        <div class="logo-mark"></div>
+        StreetPulse
+      </div>
+      <div class="nav-tag">Coming Soon</div>
+    </nav>
+
+    <!-- Ticker -->
+    <div class="ticker-section">
+      <div class="ticker-track" id="ticker">
+        <span class="ticker-item">Mutual Fund Analytics <span class="value">SOON</span></span>
+        <span class="ticker-item">Cross-Fund Intelligence <span class="value">SOON</span></span>
+        <span class="ticker-item">Portfolio X-Ray <span class="value">SOON</span></span>
+        <span class="ticker-item">Sector Heatmaps <span class="value">SOON</span></span>
+        <span class="ticker-item">Equity Exposure Tracking <span class="value">SOON</span></span>
+        <span class="ticker-item">AI-Powered Decisions <span class="value">SOON</span></span>
+        <span class="ticker-item">Real-Time Insights <span class="value">SOON</span></span>
+        <span class="ticker-item">Smart Alerts <span class="value">SOON</span></span>
+        <!-- Duplicated for seamless loop -->
+        <span class="ticker-item">Mutual Fund Analytics <span class="value">SOON</span></span>
+        <span class="ticker-item">Cross-Fund Intelligence <span class="value">SOON</span></span>
+        <span class="ticker-item">Portfolio X-Ray <span class="value">SOON</span></span>
+        <span class="ticker-item">Sector Heatmaps <span class="value">SOON</span></span>
+        <span class="ticker-item">Equity Exposure Tracking <span class="value">SOON</span></span>
+        <span class="ticker-item">AI-Powered Decisions <span class="value">SOON</span></span>
+        <span class="ticker-item">Real-Time Insights <span class="value">SOON</span></span>
+        <span class="ticker-item">Smart Alerts <span class="value">SOON</span></span>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Building something bold
+      </div>
+      <h1>
+        The Pulse of<br>
+        India's <span class="highlight">Mutual Fund</span><br>
+        Markets
+      </h1>
+      <p>
+        StreetPulse cuts through the noise. Track what funds actually hold,
+        spot patterns across portfolios, and let AI sharpen every decision you make.
+        Financial intelligence — no fluff.
+      </p>
+
+      <form class="waitlist" id="waitlistForm" action="https://formspree.io/f/mbdqobqz" method="POST">
+        <input type="email" name="email" id="emailInput" placeholder="your@email.com" required autocomplete="email" aria-label="Email address">
+        <button type="submit">Keep Me Posted</button>
+      </form>
+      <p class="waitlist-note">Join the waitlist. No spam, just launch updates.</p>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <p class="features-label reveal">What's Coming</p>
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00E599" stroke-width="2" stroke-linecap="round"><path d="M21 21H4a1 1 0 01-1-1V3"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+          </div>
+          <h3>Cross-Fund Intelligence</h3>
+          <p>See how equities flow across fund houses. One stock, many portfolios — spot the patterns nobody talks about.</p>
+          <span class="feature-tag">Coming Soon</span>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00E599" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>Portfolio X-Ray</h3>
+          <p>Go beyond NAV. Break open any mutual fund to see exactly where your money sits — by sector, equity, and allocation.</p>
+          <span class="feature-tag">Coming Soon</span>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00E599" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <h3>Sector Heatmaps</h3>
+          <p>Visualize sector bets across the entire mutual fund landscape. Find where the smart money is concentrating.</p>
+          <span class="feature-tag">Coming Soon</span>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00E599" stroke-width="2" stroke-linecap="round"><path d="M12 2a4 4 0 014 4c0 1.5-.8 2.8-2 3.5V11h-4V9.5C8.8 8.8 8 7.5 8 6a4 4 0 014-4z"/><path d="M10 11h4v2a2 2 0 01-4 0v-2z"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 15v3"/></svg>
+          </div>
+          <h3>AI-Powered Decisions</h3>
+          <p>Not just data — intelligence. Get suggestions that connect the dots across holdings, trends, and your own portfolio.</p>
+          <span class="feature-tag">Coming Soon</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <span>&copy; 2026 StreetPulse. All rights reserved.</span>
+      <span>
+        <a href="mailto:hello@streetpulse.in">hello@streetpulse.in</a>
+      </span>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Waitlist form
+    const form = document.getElementById('waitlistForm');
+    const emailInput = document.getElementById('emailInput');
+    const toast = document.getElementById('toast');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      const btn = form.querySelector('button');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      fetch('https://formspree.io/f/mbdqobqz', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      })
+      .then(function(res) {
+        if (res.ok) {
+          showToast("You're in. We'll be in touch.");
+          emailInput.value = '';
+        } else {
+          showToast('Something went wrong. Try again.');
+        }
+      })
+      .catch(function() {
+        showToast('Network error. Try again.');
+      })
+      .finally(function() {
+        btn.textContent = 'Keep Me Posted';
+        btn.disabled = false;
+      });
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
